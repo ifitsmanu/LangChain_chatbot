@@ -1,4 +1,4 @@
-# 🦜️🔗 ChatLangChain
+# 🦜️🔗 # pMD_chatbot ChatLangChain
 
 This repo is an implementation of a locally hosted chatbot specifically focused on question answering over the [LangChain documentation](https://langchain.readthedocs.io/en/latest/).
 Built with [LangChain](https://github.com/hwchase17/langchain/) and [FastAPI](https://fastapi.tiangolo.com/).
@@ -39,4 +39,4 @@ Question-Answering has the following steps, all handled by [ChatVectorDBChain](h
 1. Given the chat history and new user input, determine what a standalone question would be (using GPT-3).
 2. Given that standalone question, look up relevant documents from the vectorstore.
 3. Pass the standalone question and relevant documents to GPT-3 to generate a final answer.
-# pMD_chatbot
+
