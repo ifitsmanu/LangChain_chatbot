@@ -3,24 +3,17 @@ import boto3
 import json
 from langchain.memory.chat_message_histories import DynamoDBChatMessageHistory
 from langchain.memory.chat_message_histories import DynamoDBChatMessageHistory
-from langchain.chat_models import ChatOpenAI
+# from langchain.chat_models import ChatOpenAI
 from langchain.llms import OpenAI
 from langchain.chains import ConversationChain
 from langchain.memory.chat_message_histories import DynamoDBChatMessageHistory
 from langchain.memory import (
     ConversationSummaryBufferMemory,
-    ConversationBufferMemory,
+    # ConversationBufferMemory,
     CombinedMemory,
     ConversationBufferWindowMemory,
 )
 from langchain.prompts import PromptTemplate
-
-
-# define how many recent conversations to be sent to the OPENAI API
-num_recent_conversations = 10
-
-# define token limit for the summary.
-summary_token_limit = 200
 
 
 def create_dynamotable(dynamodb,databasename):
@@ -43,6 +36,9 @@ def lambda_handler(event, context):
     body = json.loads(event.get("body", "{}"))
     question = body.get("question")
     session_id = body.get("session_id")
+    num_recent_conversations=body.get("num_recent_conversations")
+    temparature=body.get("temparature")
+    summary_token_limit=body.get("summary_token_limit")
     if question is None:
         return {
             "statusCode": 400,
@@ -57,7 +53,7 @@ def lambda_handler(event, context):
     summary_table.meta.client.get_waiter("table_exists").wait(
         TableName="SessionSummaryTable"
     )
-    llm = OpenAI(temperature=0)
+    llm = OpenAI(temperature=temparature)
     # create a memory object that pulls latest num_recent_conversations from the dynamodb table
 
     message_history = DynamoDBChatMessageHistory(
@@ -79,7 +75,7 @@ def lambda_handler(event, context):
     else:
         summary = ""
     summary_memory = ConversationSummaryBufferMemory(
-        llm=OpenAI(temperature=0),
+        llm=OpenAI(temperature=temparature),
         memory_key="summary",
         moving_summary_buffer=summary,
         max_token_limit=summary_token_limit,
